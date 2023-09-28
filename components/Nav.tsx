@@ -12,16 +12,15 @@ type Provider = {
 const Nav = () => {
   const { data: session } = useSession();
 
-  let [providers, setProviders] = useState<any>(null); 
+  const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
-    setProviders((async () => {
-        let res = await getProviders();
-        return res; 
-    })());
-
-  },[])
+    (async () => {
+      const res = await getProviders();
+      setProviders(res as any);
+    })();
+  }, []);
 
   return (
     <nav className='flex-between w-full mb-16 pt-3'>
@@ -35,7 +34,7 @@ const Nav = () => {
         <div className='sm:flex hidden'>
             {session?.user ? (
             <div className='flex gap-3 md:gap-5'>
-                <Link href="/create-prompt" className='black_btn'>Create Post</Link>
+                <Link href="/create-prompt" className='black_btn'>Create Prompt</Link>
                 
                 <button type='button' onClick={() => signOut} className='outline_btn'>
                     Sign Out
@@ -44,7 +43,7 @@ const Nav = () => {
 
                 <Link href="/profile"> 
                     <Image
-                        src="assets/images/logo.svg"
+                        src={(session?.user.image) as any}
                         width={37}
                         height={37}
                         className='rounded-full'
@@ -52,17 +51,22 @@ const Nav = () => {
                     />
                 </Link>
             </div>
-            ):
+            ) :
             (<>
-                {providers && Object.values(providers).map((provider) =>
-                {
-                    <button type='button' key={(provider as Provider).name}
-                    onClick={() => signIn((provider as Provider).id)}
-                    className='black_btn'>
-                        Sign In
+                {providers &&
+                  Object.values(providers).map((provider) => (
+                    <button
+                      type='button'
+                      key={(provider as any).name}
+                      onClick={() => {
+                        signIn((provider as any).id);
+                      }}
+                      className='black_btn'
+                    >
+                      Sign in
                     </button>
-                })}
-            </>)}
+                  ))}
+              </>)}
         </div>
 
         {/* Mobile Navigation */}
@@ -70,7 +74,7 @@ const Nav = () => {
             {session?.user ? (
                 <div className='flex'>
                      <Image
-                        src="assets/images/logo.svg"
+                        src={(session?.user.image) as any}
                         width={37}
                         height={37}
                         className='rounded-full'
@@ -100,17 +104,21 @@ const Nav = () => {
                 </div>
             ) : (
                 <>
-                {providers && Object.values(providers).map((provider) =>
-                {
-                    <button type='button' key={(provider as Provider).name}
-                    onClick={() => signIn((provider as Provider).id)}
-                    className='black_btn'
-                    >
-                        Sign In
-                    </button>
-                })}
-            </>
-            )}
+                  {providers &&
+                    Object.values(providers).map((provider) => (
+                      <button
+                        type='button'
+                        key={(provider as any).name}
+                        onClick={() => {
+                          signIn((provider as any).id);
+                        }}
+                        className='black_btn'
+                      >
+                        Sign in
+                      </button>
+                    ))}
+                </>
+              )}
         </div>
 
     </nav>
